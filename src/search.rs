@@ -45,9 +45,11 @@ where
 
     while dim != 0 {
         dim -= 1;
+        let bin_length = array[dim].len();
         match binary_search(&array[dim], &x[dim]) {
-            // TODO: determine whether it should goto left bin or not
-            Ok(n) => ret[dim] = n,
+            // to be compatible with numpy.histogramdd() results
+            Ok(n) if n == bin_length => ret[dim] = n,
+            Ok(n) => ret[dim] = n+1,
             Err(e) => ret[dim] = e,
         }
     }
