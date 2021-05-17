@@ -19,11 +19,11 @@ def histnd_parallel(samples, bins, chunksize):
         call = histnd_parallel_f64
         samples = samples.astype(np.double)
         bins = [ each_bin.astype(np.double) for each_bin in bins]
-    elif samples.dtype == [np.uint8, np.uint16, np.uint32, np.uint64]:
+    elif samples.dtype in [np.uint8, np.uint16, np.uint32, np.uint64]:
         call = histnd_parallel_u64
         samples = samples.astype(np.uint64)
         bins = [ each_bin.astype(np.uint64) for each_bin in bins]
-    elif samples.dtype == [np.int8, np.int16, np.int32, np.int64]:
+    elif samples.dtype in [np.int8, np.int16, np.int32, np.int64]:
         call = histnd_parallel_u64
         samples = samples.astype(np.int64)
         bins = [ each_bin.astype(np.int64) for each_bin in bins]
@@ -38,11 +38,11 @@ def histnd_serial(samples, bins):
         call = histnd_serial_f64
         samples = samples.astype(np.double)
         bins = [ each_bin.astype(np.double) for each_bin in bins]
-    elif samples.dtype == [np.uint8, np.uint16, np.uint32, np.uint64]:
+    elif samples.dtype in [np.uint8, np.uint16, np.uint32, np.uint64]:
         call = histnd_serial_u64
         samples = samples.astype(np.uint64)
         bins = [ each_bin.astype(np.uint64) for each_bin in bins]
-    elif samples.dtype == [np.int8, np.int16, np.int32, np.int64]:
+    elif samples.dtype in [np.int8, np.int16, np.int32, np.int64]:
         call = histnd_serial_u64
         samples = samples.astype(np.int64)
         bins = [ each_bin.astype(np.int64) for each_bin in bins]
