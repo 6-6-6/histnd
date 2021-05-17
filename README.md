@@ -2,7 +2,10 @@
 A python module that computes multi-dimensional histogram.
 
 The serial version should be faster that [numpy.histogramdd](https://numpy.org/doc/stable/reference/generated/numpy.histogram.html) when sample scale is small.
+
 The parallel version should be faster that [numpy.histogramdd](https://numpy.org/doc/stable/reference/generated/numpy.histogram.html) when sample scale is large.
+
+Both versions should beat [numpy.histogramdd](https://numpy.org/doc/stable/reference/generated/numpy.histogram.html) if the number of dimensions is high.
 
 ## Installation
 ```
