@@ -1,4 +1,4 @@
-use ndarray::{Array1, ArrayView1};
+use ndarray::{IxDyn, ArrayView1};
 
 use std::cmp::Ordering;
 use std::cmp::PartialOrd;
@@ -20,6 +20,10 @@ where
         usize::MIN => return Err(0),
         _ => array.len() - 1,
     };
+    // avoid infinite loop
+    if x < &array[0] {
+        return Ok(0);
+    }
     let mut left = 0;
     let mut mid: usize;
 
@@ -36,22 +40,23 @@ where
 }
 
 // return what as an error?
-pub fn binary_search_nd<T>(array: &[ArrayView1<T>], x: &ArrayView1<T>) -> Array1<usize>
+pub fn binary_search_nd<T>(array: &[ArrayView1<T>], x: &ArrayView1<T>) -> IxDyn
 where
     T: PartialOrd,
 {
-    let mut dim = x.len();
-    let mut ret: Array1<usize> = Array1::zeros((dim,));
+    let dim = x.len();
+    let mut ret: Vec<usize> = Vec::with_capacity(dim);
 
-    while dim != 0 {
-        dim -= 1;
-        let bin_length = array[dim].len();
-        match binary_search(&array[dim], &x[dim]) {
+    let mut i = 0;
+    while i != dim {
+        let bin_length = array[i].len();
+        match binary_search(&array[i], &x[i]) {
             // to be compatible with numpy.histogramdd() results
-            Ok(n) if n == bin_length => ret[dim] = n,
-            Ok(n) => ret[dim] = n+1,
-            Err(e) => ret[dim] = e,
+            Ok(n) if n == bin_length => ret.push(n),
+            Ok(n) => ret.push(n+1),
+            Err(e) => ret.push(e),
         }
+        i += 1;
     }
-    ret
+    IxDyn(&ret)
 }

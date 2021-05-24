@@ -1,3 +1,5 @@
+use std::thread;
+
 use ndarray::parallel::prelude::*;
 use ndarray::{Array, ArrayD};
 use ndarray::{ArrayView1, ArrayView2};
@@ -6,6 +8,17 @@ use ndarray::{Axis, IxDyn};
 use std::cmp::PartialOrd;
 
 use crate::binary_search_nd;
+
+fn serial_search<T>(samples: &ArrayView2<T>, bins: &[ArrayView1<T>]) -> Vec<IxDyn>
+where
+    T: PartialOrd,
+{
+    let mut ret = Vec::with_capacity(samples.len_of(Axis(0)));
+    for sample in samples.axis_iter(Axis(0)) {
+        ret.push(binary_search_nd(bins, &sample));
+    }
+    ret
+}
 
 pub fn histnd_serial<T>(samples: &ArrayView2<T>, bins: &[ArrayView1<T>]) -> Option<ArrayD<usize>>
 where
@@ -24,20 +37,20 @@ where
         return None;
     }
 
-    let mut ret_shape = Vec::new();
+    let mut ret_shape = Vec::with_capacity(samples.len_of(Axis(1)));
     for bin in bins.iter() {
         ret_shape.push(bin.len() + 1);
     }
-    let mut ret = Array::zeros(ret_shape);
 
-    // TODO: into_par_iter
-    let search_results = samples
-        .axis_iter(Axis(0))
-        .into_iter()
-        .map(|x| binary_search_nd(bins, &x));
+    let ret_allocator = thread::spawn(move || {
+        Array::zeros(ret_shape)
+    });
 
+    let search_results = serial_search(samples, bins);
+
+    let mut ret = ret_allocator.join().unwrap();
     for result in search_results {
-        ret[IxDyn(&result.to_vec())] += 1
+        ret[result] += 1
     }
 
     Some(ret)
@@ -64,23 +77,26 @@ where
         return None;
     }
 
-    let mut ret_shape = Vec::new();
+    let mut ret_shape = Vec::with_capacity(samples.len_of(Axis(0)));
     for bin in bins.iter() {
         ret_shape.push(bin.len() + 1);
     }
-    let mut ret = Array::zeros(ret_shape);
 
-    // search in parallel
-    let mut search_results = Vec::new();
-    samples
-        .axis_chunks_iter(Axis(0), chunksize)
+    let ret_allocator = thread::spawn(move || {
+        Array::zeros(ret_shape)
+    });
+
+    let mut search_chunks = Vec::new();
+    // TODO: into_par_iter
+    samples.axis_chunks_iter(Axis(0), chunksize)
         .into_par_iter()
-        .map(|chunk| histnd_serial(&chunk, bins))
-        .collect_into_vec(&mut search_results);
+        .map(|chunk| serial_search(&chunk, bins))
+        .collect_into_vec(&mut search_chunks);
 
-    for result in search_results {
-        if let Some(n) = result {
-            ret = ret + n
+    let mut ret = ret_allocator.join().unwrap();
+    for chunk in search_chunks {
+        for result in chunk {
+            ret[result] += 1
         }
     }
 
