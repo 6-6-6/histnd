@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setup(
     # TODO: read metadata from Cargo.toml
     name="histnd",
-    version="0.1.1",
+    version="0.1.2",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
