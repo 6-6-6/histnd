@@ -1,4 +1,5 @@
 use ndarray::{ArrayView1, Ix2};
+use ndarray::{Array};
 
 //mod lib;
 use histnd::{binary_search,histnd_serial,histnd_parallel};
@@ -19,19 +20,17 @@ fn check_binary_search() {
 #[test]
 fn check_parallel_and_serial() {
     // init bin
-    let bin = ArrayView1::from(&[0,1,2,3,4,5,7,8,9,10,100,1000,10000]);
+    //let bin = ArrayView1::from(&[-1,0,1,2,3,4,5,7,8,9,10,100]);
+    let bin = Array::range(0., 500., 1.5);
     let testitem_nd = [bin.view(), bin.view(), bin.view()];
     // init samples
-    let input: Vec<i64> = (0..2400).collect();
-
-    let testsample = ArrayView1::from(&input);
-    let testsample_nd = testsample.view().into_shape(Ix2(300,8)).unwrap();
+    let testsample = Array::range(0., 300000., 1.);
+    let testsample_nd = testsample.view().into_shape(Ix2(100000,3)).unwrap();
 
     println!("input data: \n{:?}\n\n", testsample_nd);
     println!("bins: \n{:?}\n\n", testitem_nd);
 
     let histndret = histnd_serial(&testsample_nd, &testitem_nd);
-    println!("histnd returns: \n{:?}\n\n", histndret);
 
     let histndret_p = histnd_parallel(&testsample_nd, &testitem_nd, 10);
     println!("histnd_p returns: \n{:?}\n\n", histndret_p);
