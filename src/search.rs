@@ -22,7 +22,7 @@ where
     };
     // avoid infinite loop
     if x < &array[0] {
-        return Ok(0);
+        return Err(0);
     }
     let mut left = 0;
     let mut mid: usize;
