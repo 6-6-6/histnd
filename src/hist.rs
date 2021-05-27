@@ -49,7 +49,7 @@ where
     let search_results = serial_search(samples, bins);
 
     let mut ret = ret_allocator.join().unwrap();
-    for result in search_results {
+    for result in search_results.iter() {
         ret[result] += 1
     }
 
@@ -94,8 +94,8 @@ where
         .collect_into_vec(&mut search_chunks);
 
     let mut ret = ret_allocator.join().unwrap();
-    for chunk in search_chunks {
-        for result in chunk {
+    for chunk in search_chunks.iter() {
+        for result in chunk.iter() {
             ret[result] += 1
         }
     }
