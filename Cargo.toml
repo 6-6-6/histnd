@@ -13,6 +13,6 @@ name = "histnd"
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.13", features = ["extension-module"] }
-numpy = "0.13"
-ndarray = { version = "0.14", features = ["rayon"] }
+pyo3 = { version = "0.16", features = ["extension-module"] }
+numpy = "0.16"
+ndarray = { version = "0.15", features = ["rayon"] }

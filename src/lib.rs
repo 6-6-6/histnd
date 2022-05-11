@@ -15,7 +15,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     // maybe check it before calling this function
 
     // TODO: Generic Data Types
-    #[pyfn(m, "histnd_parallel_weighted_f64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_parallel_weighted_f64")]
     fn histnd_parallel_weighted_f64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, f64>,
@@ -40,7 +41,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_serial_weighted_f64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_serial_weighted_f64")]
     fn histnd_serial_weighted_f64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, f64>,
@@ -63,7 +65,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_parallel_f64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_parallel_f64")]
     fn histnd_parallel_f64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, f64>,
@@ -88,7 +91,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_serial_f64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_serial_f64")]
     fn histnd_serial_f64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, f64>,
@@ -108,7 +112,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     }
 
     // TODO: Generic Data Types
-    #[pyfn(m, "histnd_parallel_weighted_i64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_parallel_weighted_i64")]
     fn histnd_parallel_weighted_i64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, i64>,
@@ -133,7 +138,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_serial_weighted_i64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_serial_weighted_i64")]
     fn histnd_serial_weighted_i64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, i64>,
@@ -156,7 +162,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_parallel_i64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_parallel_i64")]
     fn histnd_parallel_i64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, i64>,
@@ -181,7 +188,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_serial_i64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_serial_i64")]
     fn histnd_serial_i64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, i64>,
@@ -201,7 +209,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     }
 
     // TODO: Generic Data Types
-    #[pyfn(m, "histnd_parallel_weighted_u64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_parallel_weighted_u64")]
     fn histnd_parallel_weighted_u64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, u64>,
@@ -226,7 +235,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_serial_weighted_u64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_serial_weighted_u64")]
     fn histnd_serial_weighted_u64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, u64>,
@@ -249,7 +259,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_parallel_u64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_parallel_u64")]
     fn histnd_parallel_u64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, u64>,
@@ -274,7 +285,8 @@ fn histnd(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         }
     }
 
-    #[pyfn(m, "histnd_serial_u64")]
+    #[pyfn(m)]
+    #[pyo3(name = "histnd_serial_u64")]
     fn histnd_serial_u64_py<'py>(
         py: Python<'py>,
         py_samples: PyReadonlyArray2<'py, u64>,
