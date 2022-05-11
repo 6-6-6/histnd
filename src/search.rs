@@ -1,4 +1,4 @@
-use ndarray::{IxDyn, ArrayView1};
+use ndarray::{ArrayView1, IxDyn};
 
 use std::cmp::Ordering;
 use std::cmp::PartialOrd;
@@ -29,7 +29,7 @@ where
 
     while left <= right {
         mid = (right + left) / 2;
-        match array[mid].partial_cmp(&x) {
+        match array[mid].partial_cmp(x) {
             Some(Ordering::Greater) => right = mid.checked_sub(1).map_or(usize::MIN, |n| n),
             Some(Ordering::Less) => left = mid.checked_add(1).map_or(usize::MAX, |n| n),
             Some(Ordering::Equal) => return Ok(mid),
@@ -53,7 +53,7 @@ where
         match binary_search(&array[i], &x[i]) {
             // to be compatible with numpy.histogramdd() results
             Ok(n) if n == bin_length => ret.push(n),
-            Ok(n) => ret.push(n+1),
+            Ok(n) => ret.push(n + 1),
             Err(e) => ret.push(e),
         }
         i += 1;

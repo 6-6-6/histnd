@@ -9,7 +9,12 @@ use std::cmp::PartialOrd;
 
 use crate::binary_search_nd;
 
-fn serial_search<T>(samples: &ArrayView2<T>, bins: &[ArrayView1<T>]) -> Vec<IxDyn>
+pub enum Weight<'a> {
+    NoWeight(f64),
+    HasWeight(ArrayView1<'a, f64>),
+}
+
+fn serial_search<T>(samples: ArrayView2<T>, bins: &[ArrayView1<T>]) -> Vec<IxDyn>
 where
     T: PartialOrd,
 {
@@ -20,7 +25,11 @@ where
     ret
 }
 
-pub fn histnd_serial<T>(samples: &ArrayView2<T>, bins: &[ArrayView1<T>]) -> Option<ArrayD<usize>>
+pub fn histnd_serial<T>(
+    samples: ArrayView2<T>,
+    bins: &[ArrayView1<T>],
+    weight: Weight,
+) -> Option<ArrayD<f64>>
 where
     T: PartialOrd,
 {
@@ -42,25 +51,34 @@ where
         ret_shape.push(bin.len() + 1);
     }
 
-    let ret_allocator = thread::spawn(move || {
-        Array::zeros(ret_shape)
-    });
+    let ret_allocator = thread::spawn(move || Array::zeros(ret_shape));
 
     let search_results = serial_search(samples, bins);
 
     let mut ret = ret_allocator.join().unwrap();
-    for result in search_results.iter() {
-        ret[result] += 1
+
+    // add support for weighting the samples
+    match weight {
+        Weight::NoWeight(constant) => search_results
+            .iter()
+            .map(|result| ret[result] += constant)
+            .collect(),
+        Weight::HasWeight(my_weight) => search_results
+            .iter()
+            .zip(my_weight.iter())
+            .map(|(result, weight)| ret[result] += weight)
+            .collect(),
     }
 
     Some(ret)
 }
 
 pub fn histnd_parallel<T>(
-    samples: &ArrayView2<T>,
+    samples: ArrayView2<T>,
     bins: &[ArrayView1<T>],
+    weight: Weight,
     chunksize: usize,
-) -> Option<ArrayD<usize>>
+) -> Option<ArrayD<f64>>
 where
     T: PartialOrd + Send + Sync,
 {
@@ -82,21 +100,32 @@ where
         ret_shape.push(bin.len() + 1);
     }
 
-    let ret_allocator = thread::spawn(move || {
-        Array::zeros(ret_shape)
-    });
+    let ret_allocator = thread::spawn(move || Array::zeros(ret_shape));
 
     let mut search_chunks = Vec::new();
     // TODO: into_par_iter
-    samples.axis_chunks_iter(Axis(0), chunksize)
+    samples
+        .axis_chunks_iter(Axis(0), chunksize)
         .into_par_iter()
-        .map(|chunk| serial_search(&chunk, bins))
+        .map(|chunk| serial_search(chunk, bins))
         .collect_into_vec(&mut search_chunks);
 
     let mut ret = ret_allocator.join().unwrap();
-    for chunk in search_chunks.iter() {
-        for result in chunk.iter() {
-            ret[result] += 1
+    match weight {
+        Weight::NoWeight(constant) => {
+            for chunk in search_chunks.iter() {
+                chunk.iter().map(|result| ret[result] += constant).collect()
+            }
+        }
+        Weight::HasWeight(my_weight) => {
+            let weight_iter = my_weight.axis_chunks_iter(Axis(0), chunksize);
+            for (chunk, weight_chunk) in search_chunks.iter().zip(weight_iter) {
+                chunk
+                    .iter()
+                    .zip(weight_chunk)
+                    .map(|(result, weight)| ret[result] += weight)
+                    .collect()
+            }
         }
     }
 
