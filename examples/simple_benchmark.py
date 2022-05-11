@@ -19,10 +19,10 @@ bins = np.arange(101, dtype='float64')/100"""
 
 # directly call Rust function
 # use 6 cores
-run_parallel = "histnd.histnd_parallel_f64(c3d_np, [bins]*3, int(nsize/6))"
+run_parallel = "histnd.histnd_parallel_f64(c3d_np, [bins]*3, 1, int(nsize/6))"
 
 # with a wrapper, simplifies the usage
-run_serial = "histnd.histnd_serial_f64(c3d_np, [bins]*3)"
+run_serial = "histnd.histnd_serial_f64(c3d_np, [bins]*3, 1)"
 
 # serial version
 run_np = 'np.histogramdd(c3d_np, bins=100, range=[(0,1)]*3)'
